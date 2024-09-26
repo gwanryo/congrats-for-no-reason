@@ -36,6 +36,14 @@
           input.classList.remove('is-invalid');
         }
 
+        if (input.value.length === 0) {
+          let canvas = document.getElementById('canvas');
+          let context = canvas.getContext('2d');
+          context.transform(1, 0.025, 0, 1, -70, -10);
+          context.clearRect(-10, -10, canvas.width + 10, canvas.height + 10);
+          return;
+        }
+
         let sliced = input.value.slice(0, 4);
 
         let context = document.getElementById('canvas').getContext('2d');

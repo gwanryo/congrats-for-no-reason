@@ -20,6 +20,14 @@
   <meta name="twitter:title" content="축하합니다 짤 생성기">
   <meta name="twitter:description" content="- 아무 이유 없음 -">
   <meta name="twitter:image" content="https://congrats.rwe.kr/static/thumbnail.png">
+  <style type="text/css">
+    @font-face {
+        font-family: 'ChosunGs';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGs.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+  </style>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelector('form').addEventListener('submit', (event) => {
@@ -56,46 +64,46 @@
           context.drawImage(image, 0, 0, 1024, image.height * (1024 / image.width));
           
           if (input.value.length === 1) {
-            context.font = 'bold 46px gungsuh';
+            context.font = 'bold 46px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 70, 9);
             context.fillText(input.value[0], 300, 250);
           } else if (input.value.length === 2) {
-            context.font = 'bold 44px gungsuh';
+            context.font = 'bold 44px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 40, 9);
             context.fillText(input.value[0], 300, 250);
-            context.font = 'bold 48px gungsuh';
+            context.font = 'bold 48px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 70, 8);
             context.fillText(input.value[1], 300, 250);
           } else if (input.value.length === 3) {
-            context.font = 'bold 42px gungsuh';
+            context.font = 'bold 42px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 0, 10);
             context.fillText(input.value[0], 300, 250);
-            context.font = 'bold 46px gungsuh';
+            context.font = 'bold 46px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 70, 9);
             context.fillText(input.value[1], 300, 250);
-            context.font = 'bold 48px gungsuh';
+            context.font = 'bold 48px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 76, 9);
             context.fillText(input.value[2], 300, 250);
           } else if (input.value.length === 4) {
-            context.font = 'bold 40px gungsuh';
+            context.font = 'bold 40px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, -30, 10);
             context.fillText(input.value[0], 300, 250);
-            context.font = 'bold 42px gungsuh';
+            context.font = 'bold 42px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 70, 9);
             context.fillText(input.value[1], 300, 250);
-            context.font = 'bold 46px gungsuh';
+            context.font = 'bold 46px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 72, 9);
             context.fillText(input.value[2], 300, 250);
-            context.font = 'bold 48px gungsuh';
+            context.font = 'bold 48px ChosunGs';
             context.fillStyle = '#101010';
             context.transform(1, -0.025, 0, 1, 76, 12);
             context.fillText(input.value[3], 300, 250);
@@ -124,7 +132,7 @@
   
     <footer>
       <small>
-        Made by gwanryo · <a href="https://github.com/gwanryo" target="_blank">GitHub</a> · <a href="https://www.fmkorea.com/best/2594426530" target="_blank">Source</a>
+        Made by gwanryo · <a href="https://github.com/gwanryo/congrats-for-no-reason" target="_blank">GitHub</a> · <a href="https://www.fmkorea.com/best/2594426530" target="_blank">Original</a>
       </small>
     </footer>
   </div>

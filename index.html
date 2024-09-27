@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>축하합니다 짤 생성기</title>
-  <meta name='description' content='- 아무 이유 없음 -' />
+  <meta name='description' content='-아무 이유 없음-' />
   <!-- Facebook Meta Tags -->
   <meta property="og:url" content="https://congrats.rwe.kr">
   <meta property="og:type" content="website">
@@ -18,7 +18,7 @@
   <meta property="twitter:domain" content="congrats.rwe.kr">
   <meta property="twitter:url" content="https://congrats.rwe.kr">
   <meta name="twitter:title" content="축하합니다 짤 생성기">
-  <meta name="twitter:description" content="- 아무 이유 없음 -">
+  <meta name="twitter:description" content="-아무 이유 없음-">
   <meta name="twitter:image" content="https://congrats.rwe.kr/static/thumbnail.png">
   <style type="text/css">
     @font-face {
@@ -29,9 +29,26 @@
     }
 
     body {
-      font-family: 'ChosunGs', sans-serif !important;
+      font-family: 'ChosunGs', 'gungsuh', sans-serif !important;
     }
   </style>
+  <script>
+    function exportCanvasAsPNG(id, fileName) {
+      var canvasElement = document.getElementById(id);
+      var MIME_TYPE = "image/png";
+      var imgURL = canvasElement.toDataURL(MIME_TYPE);
+
+      var dlLink = document.createElement('a');
+      dlLink.download = fileName;
+      dlLink.href = imgURL;
+      dlLink.dataset.downloadurl = [MIME_TYPE, dlLink.download, dlLink.href].join(':');
+
+      document.body.appendChild(dlLink);
+      dlLink.click();
+      document.body.removeChild(dlLink);
+    }
+  </script>
+  <script src="./resources/js/themetoggler.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelector('form').addEventListener('submit', (event) => {
@@ -50,17 +67,19 @@
 
         if (input.value.length === 0) {
           let canvas = document.getElementById('canvas');
-          let context = canvas.getContext('2d');
-          context.transform(1, 0.025, 0, 1, -70, -10);
-          context.clearRect(-10, -10, canvas.width + 10, canvas.height + 10);
+          let newCanvas = document.createElement('canvas');
+          newCanvas.id = 'canvas';
+          canvas.parentNode.replaceChild(newCanvas, canvas);
+          document.getElementById('save-button').style.display = 'none';
           return;
         }
 
         let sliced = input.value.slice(0, 4);
-
-        let context = document.getElementById('canvas').getContext('2d');
+        let canvas = document.getElementById('canvas');
+        let context = canvas.getContext('2d');
         let image = new Image();
         image.src = "./static/congrats.png";
+        image.crossOrigin = "anonymous";
 
         image.onload = (() => {
           canvas.width = 1024;
@@ -112,6 +131,7 @@
             context.transform(1, -0.025, 0, 1, 76, 12);
             context.fillText(input.value[3], 300, 250);
           }
+          document.getElementById('save-button').style.display = 'block';
         });
       });
     });
@@ -121,16 +141,18 @@
 
 <body>
   <div class="container">
-    <h2 class="mt-3 mb-3">🎉 축하합니다 짤 생성기 🎉</h2>
-    <form class="form-floating mt-3 mb-3">
+    <h2 class="mt-3">🎉 축하합니다 짤 생성기 🎉</h2>
+    <form class="form-floating mt-3">
       <input type="text" class="form-control" id="floating-input">
       <label for="floating-input">이름 (4글자까지 가능)</label>
     </form>
-    <div class="row">
+    <div class="row mt-3">
       <canvas id="canvas"></canvas>
     </div>
-  
-    <footer>
+    <div class="row mt-3" id="save-button" style="display: none">
+      <button class="btn btn-primary" onclick="exportCanvasAsPNG('canvas', '축하합니다_' + document.getElementById('floating-input').value)">저장하기</button>
+    </div>
+    <footer class="mt-3">
       <small>
         Made by gwanryo · <a href="https://github.com/gwanryo/congrats-for-no-reason" target="_blank">GitHub</a> · <a href="https://www.fmkorea.com/best/2594426530" target="_blank">Original</a> · <a href="https://noonnu.cc/font_page/416" target="_blank">Font</a>
       </small>

@@ -501,16 +501,21 @@
     }
   </style>
   <script>
-    const MAX_LENGTH = 4;
+    const MAX_LENGTH = 8;
     const EXAMPLE_NAME = '홍길동';
     const CANVAS_WIDTH = 1024;
 
-    // 글자 수별 [크기, x 이동, y 이동]. 현수막 기울기에 맞춰 누적 변환으로 한 글자씩 배치
+    // 글자 수별 글자 위치 [크기(px), x, y(기준선), 기울기]. 캔버스 1024×512 기준 절대 좌표
+    // 현수막 원근에 맞춰 오른쪽으로 갈수록 크고 더 기울어짐. 뱃지 사이 x 225~627 안에 배치
     const NAME_LAYOUTS = {
-      1: [[46, 70, 9]],
-      2: [[44, 40, 9], [48, 70, 8]],
-      3: [[42, 0, 10], [46, 70, 9], [48, 76, 9]],
-      4: [[40, -30, 10], [42, 70, 9], [46, 72, 9], [48, 76, 12]],
+      1: [[46, 370, 251.5, -0.025]],
+      2: [[44, 340, 251.5, -0.025], [48, 410, 250.25, -0.05]],
+      3: [[42, 300, 252.5, -0.025], [46, 370, 252.25, -0.05], [48, 446, 249.95, -0.075]],
+      4: [[40, 270, 252.5, -0.025], [42, 340, 252.25, -0.05], [46, 412, 250.15, -0.075], [48, 488, 248.95, -0.1]],
+      5: [[40, 244, 252.9, -0.025], [42, 313.3, 251.5, -0.044], [44, 385.9, 250, -0.062], [46, 461.8, 248.3, -0.081], [48, 541, 246.6, -0.1]],
+      6: [[40, 232, 253.1, -0.025], [42, 294.4, 251.7, -0.04], [43, 359.2, 250.3, -0.055], [45, 426.4, 248.8, -0.07], [46, 496, 247.2, -0.085], [48, 568, 245.5, -0.1]],
+      7: [[39, 232, 252.6, -0.025], [40, 284.1, 251.4, -0.037], [41, 337.9, 250.2, -0.05], [43, 393.4, 249, -0.062], [44, 450.6, 247.6, -0.075], [45, 509.4, 246.3, -0.087], [47, 569.9, 244.9, -0.1]],
+      8: [[34, 232, 250.5, -0.025], [35, 277.5, 249.4, -0.036], [36, 324.2, 248.3, -0.046], [37, 372.2, 247.2, -0.057], [38, 421.4, 246, -0.068], [39, 471.9, 244.7, -0.079], [40, 523.7, 243.4, -0.089], [41, 576.8, 242.1, -0.1]],
     };
 
     // 이모지·결합 문자를 한 글자로 세기 위해 grapheme 단위로 분리
@@ -614,11 +619,12 @@
     function drawTextOnCanvas(context, chars) {
       const layout = NAME_LAYOUTS[chars.length] || [];
       context.fillStyle = '#101010';
-      layout.forEach(([size, dx, dy], index) => {
+      layout.forEach(([size, x, y, slant], index) => {
         context.font = `bold ${size}px ChosunGs`;
-        context.transform(1, -0.025, 0, 1, dx, dy);
-        context.fillText(chars[index], 300, 250);
+        context.setTransform(1, slant, 0, 1, x, y);
+        context.fillText(chars[index], 0, 0);
       });
+      context.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     function getFileName() {
@@ -767,9 +773,9 @@
           <div class="field">
             <input id="name-input" name="name" type="text" autocomplete="off" spellcheck="false" enterkeyhint="done"
               placeholder="홍길동…" aria-describedby="name-hint status">
-            <span id="name-count" class="count" aria-hidden="true">0/4</span>
+            <span id="name-count" class="count" aria-hidden="true">0/8</span>
           </div>
-          <p id="name-hint" class="hint">현수막에 들어갈 이름, 최대 4글자</p>
+          <p id="name-hint" class="hint">현수막에 들어갈 이름, 최대 8글자</p>
           <p id="status" class="status" role="status" aria-live="polite"></p>
         </form>
 

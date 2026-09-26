@@ -6,7 +6,7 @@ Please visit [here](https://congrats.rwe.kr) to see the web page.
 
 This project is a simple project that I made for fun.
 
-It is just a web page that shows maximum 4 characters of congratulation for no reason.
+It is just a web page that shows maximum 8 characters of congratulation for no reason.
 
 FYI, "축하합니다 -아무 이유 없음-" means "congratulation -for no reason-".
 

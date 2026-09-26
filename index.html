@@ -37,52 +37,96 @@
     }
   </style>
   <script>
+    const MAX_LENGTH = 4;
+
+    // 이모지·결합 문자를 한 글자로 세기 위해 grapheme 단위로 분리
+    const segmenter = 'Segmenter' in Intl ? new Intl.Segmenter('ko', { granularity: 'grapheme' }) : null;
+    const toChars = (text) => segmenter
+      ? Array.from(segmenter.segment(text), (s) => s.segment)
+      : Array.from(text);
+
+    // 배경 이미지와 폰트는 한 번만 불러와서 재사용
+    const baseImage = new Image();
+    baseImage.crossOrigin = "anonymous";
+    const baseImageReady = new Promise((resolve, reject) => {
+      baseImage.onload = resolve;
+      baseImage.onerror = reject;
+    });
+    baseImage.src = "./static/congrats.jpg";
+    const fontReady = document.fonts.load('bold 48px ChosunGs').catch(() => {});
+
+    // 가장 최근 요청만 그리도록 하는 순번
+    let renderId = 0;
+
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelector('form').addEventListener('submit', (event) => { event.preventDefault(); });
       let input = document.getElementById('floating-input');
-      input.addEventListener('input', () => { handleInput(input) });
+      input.addEventListener('input', (event) => { handleInput(input, event.isComposing) });
+      input.addEventListener('compositionend', () => { handleInput(input, false) });
     });
 
-    function handleInput(input) {
-      const maxLength = 4;
-      
-      if (input.value.length > maxLength) {
+    function handleInput(input, isComposing) {
+      let chars = toChars(input.value.normalize('NFC'));
+
+      if (chars.length > MAX_LENGTH) {
         input.classList.add('is-invalid');
-        input.value = input.value.slice(0, maxLength);
+        chars = chars.slice(0, MAX_LENGTH);
+        // 한글 조합 중에 값을 바꾸면 조합이 깨지므로 조합이 끝난 뒤에 자름
+        if (!isComposing) {
+          input.value = chars.join('');
+        }
       } else {
         input.classList.remove('is-invalid');
       }
 
-      if (input.value.length === 0) {
+      if (chars.join('').trim().length === 0) {
         resetCanvas();
-        document.getElementById('save-button').style.display = 'none';
         return;
       }
 
-      updateCanvas(input.value);
+      updateCanvas(chars);
+    }
+
+    function setSaveButtonVisible(visible) {
+      document.getElementById('save-button').style.display = visible ? 'block' : 'none';
+    }
+
+    function setStatus(message) {
+      document.getElementById('status').textContent = message;
     }
 
     function resetCanvas() {
+      renderId++;
+      setSaveButtonVisible(false);
       const oldCanvas = document.getElementById('canvas');
       const newCanvas = document.createElement('canvas');
       newCanvas.id = 'canvas';
       oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
     }
 
-    function updateCanvas(text) {
+    async function updateCanvas(chars) {
+      const id = ++renderId;
+      setSaveButtonVisible(false);
+
+      try {
+        await Promise.all([baseImageReady, fontReady]);
+      } catch {
+        setStatus('이미지를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.');
+        return;
+      }
+
+      if (id !== renderId) {
+        return;
+      }
+
       let canvas = document.getElementById('canvas');
       let context = canvas.getContext('2d');
-      let image = new Image();
-      image.src = "./static/congrats.png";
-      image.crossOrigin = "anonymous";
-
-      image.onload = (() => {
-        canvas.width = 1024;
-        canvas.height = image.height * (1024 / image.width);
-        context.drawImage(image, 0, 0, 1024, image.height * (1024 / image.width));
-        drawTextOnCanvas(context, text);
-        document.getElementById('save-button').style.display = 'block';
-      });
+      canvas.width = 1024;
+      canvas.height = baseImage.height * (1024 / baseImage.width);
+      context.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+      drawTextOnCanvas(context, chars);
+      setStatus('');
+      setSaveButtonVisible(true);
     }
 
     function drawTextOnCanvas(context, text) {
@@ -158,11 +202,12 @@
       <input type="text" class="form-control" id="floating-input">
       <label for="floating-input">이름 (4글자까지 가능)</label>
     </form>
+    <div id="status" class="text-danger mt-2" aria-live="polite"></div>
     <div class="row mt-3">
       <canvas id="canvas"></canvas>
     </div>
     <div class="row mt-3" id="save-button" style="display: none">
-      <button class="btn btn-primary" onclick="exportCanvasAsPNG('canvas', '축하합니다_' + document.getElementById('floating-input').value)">저장하기</button>
+      <button class="btn btn-primary" onclick="exportCanvasAsPNG('canvas', '축하합니다_' + document.getElementById('floating-input').value.trim() + '.png')">저장하기</button>
     </div>
     <footer class="mt-3">
       <small>
